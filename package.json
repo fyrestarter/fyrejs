@@ -1,0 +1,71 @@
+{
+  "name": "fyrejs",
+  "version": "0.0.1",
+  "author": {
+    "name": ""
+  },
+  "files": [
+    "dist"
+  ],
+  "typings": "./dist/main.d.ts",
+  "description": "",
+  "devDependencies": {
+    "@types/jasmine": "2.5.53",
+    "@types/node": "8.0.7",
+    "awesome-typescript-loader": "3.2.1",
+    "copy-webpack-plugin": "4.0.1",
+    "coveralls": "2.13.1",
+    "cross-env": "5.0.1",
+    "cross-spawn": "5.1.0",
+    "del": "3.0.0",
+    "istanbul-instrumenter-loader": "2.0.0",
+    "jasmine": "2.6.0",
+    "karma": "1.7.0",
+    "karma-chrome-launcher": "2.2.0",
+    "karma-coverage": "1.1.1",
+    "karma-firefox-launcher": "1.0.1",
+    "karma-jasmine": "1.1.0",
+    "karma-jasmine-html-reporter": "0.2.2",
+    "karma-mocha-reporter": "2.2.3",
+    "karma-phantomjs-launcher": "1.0.4",
+    "karma-remap-coverage": "0.1.4",
+    "karma-sourcemap-loader": "0.3.7",
+    "karma-webpack": "2.0.3",
+    "phantomjs-prebuilt": "2.1.14",
+    "tslint": "5.4.3",
+    "ts-node": "3.1.0",
+    "typescript": "2.4.1",
+    "webpack": "3.0.0"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "homepage": "",
+  "keywords": [],
+  "licenses": [],
+  "main": "./dist/main.js",
+  "optionalDependencies": {},
+  "readme": "",
+  "readmeFilename": "",
+  "repository": {
+    "url": "",
+    "type": ""
+  },
+  "scripts": {
+    "install-deps": "npm install && node scripts/install-other-dependencies.js",
+    "clean": "node scripts/clean.js",
+    "build": "node scripts/build.js",
+    "build-release": "cross-env NODE_ENV=production npm run build",
+    "lint": "tslint --project ./tsconfig.json",
+    "test": "cross-env NODE_ENV=test node scripts/test.js",
+    "test-chrome": "cross-env TEST_BROWSER=Chrome node scripts/test.js",
+    "test-firefox": "cross-env TEST_BROWSER=Firefox node scripts/test.js",
+    "release-major": "cross-env RELEASE_TYPE=major node scripts/release.js",
+    "release-minor": "cross-env RELEASE_TYPE=minor node scripts/release.js",
+    "release-patch": "cross-env RELEASE_TYPE=patch node scripts/release.js",
+    "report-coverage": "node scripts/report-coverage.js"
+  },
+  "bugs": {
+    "url": ""
+  }
+}

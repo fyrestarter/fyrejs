@@ -1,0 +1,32 @@
+sudo: false
+language: node_js
+env:
+  - NODE_ENV=CI
+node_js:
+  - "8.0.0"
+  - "8.1.0"
+
+branches:
+  only:
+  - master
+  - production
+
+install:
+  - npm run install-deps
+after_script:
+  - npm run report-coverage
+
+before_deploy:
+  - npm run build-release
+
+deploy:
+  provider: npm
+  email: $NPM_EMAIL
+  api_key: $NPM_API_KEY
+  skip_cleanup: true
+  on:
+    branch: production
+    node: 8.0.0
+
+git:
+  depth: 10
