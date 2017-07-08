@@ -7,7 +7,7 @@ export const eventMetadata:any = {get:() => {}};
 
 export class VNode {
     type:string|Function;
-    children?:VNode[];
+    children?:Array<VNode|string|VNode[]>;
     props?:any;
     stateManagedProps?:any;
     text?:string;
@@ -37,10 +37,10 @@ export function dom(template:any, ...args):any {
     let el:Element;
     if (elements && elements.length > 0) {
          el = elements.item(0);
+        return createVNodeAtRuntime(el, values);
     }
 
-    return createVNodeAtRuntime(el, values);
-
+    return null;
 }
 
 function getValues(str:string, values):any {
@@ -66,7 +66,7 @@ function getValues(str:string, values):any {
     return str;
 }
 
-export function createVNodeAtRuntime(el:Element, values:any[], parentNode?:VNode):VNode {
+function createVNodeAtRuntime(el:Element, values:any[], parentNode?:VNode):VNode {
 
     let output:VNode;
 
@@ -114,12 +114,6 @@ export function createVNodeAtRuntime(el:Element, values:any[], parentNode?:VNode
                         stateManagedAttributes[stateName][nameAndState[0]] = attr.value;
                     }
                     else {
-
-                        let value = attr.value;
-
-                        if (!value)
-                            value = "";
-
                         attributes[attr.name] = getValues(attr.value, values);
                     }
 
@@ -182,10 +176,10 @@ export function createVNode(ele:string|Function, props?:any, ...args):VNode {
 
 }
 
-export function createElement(tag:VNode|string, refs?:any, stateManagedProperties?:any, parentElement?:any):any {
+export function createElement(tag:any, refs?:any, stateManagedProperties?:any, parentElement?:any):any {
 
     if (!tag)
-        return;
+        return null;
 
     let element:any;
 
@@ -212,6 +206,10 @@ export function createElement(tag:VNode|string, refs?:any, stateManagedPropertie
         }
         else {
             element = new (vnode.type as new() => any)();
+        }
+
+        if (!(element instanceof HTMLElement)) {
+            throw TypeError("Custom Component's class must extend HTMLElement.\n" + (element as Object).toString());
         }
 
         if (vnode.props) {
@@ -266,9 +264,6 @@ export function createElement(tag:VNode|string, refs?:any, stateManagedPropertie
     }
 
     if (parentElement && element) {
-
-        if (element.initialize)
-            element.initialize();
 
         parentElement.appendChild(element);
     }

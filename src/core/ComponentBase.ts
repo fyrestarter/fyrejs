@@ -1,6 +1,7 @@
 
 import {UIElement} from "./UIElement";
 import {State} from "./support_classes/State";
+import {dom} from "./utils/dom";
 
 export abstract class ComponentBase extends UIElement {
 
@@ -10,6 +11,8 @@ export abstract class ComponentBase extends UIElement {
 
     protected _tempCurrentState:string;
 
+    protected dom:Function = dom;
+
     constructor() {
         super();
         this._viewStates = [];
@@ -18,7 +21,7 @@ export abstract class ComponentBase extends UIElement {
     }
 
     protected createChildrenCallback(): void {
-        super.createChildrenCallback();
+
     }
 
     abstract render();
