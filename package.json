@@ -67,5 +67,10 @@
   },
   "bugs": {
     "url": ""
+  },
+  "dependencies": {
+    "document-register-element": "^1.5.0",
+    "incremental-dom": "^0.5.1",
+    "t7": "^0.3.2"
   }
 }
