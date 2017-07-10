@@ -1,10 +1,12 @@
 
-import "document-register-element";
+import "./polyfills/custom-elements";
 import "./polyfills/custom-event";
 
 export class UIElement extends HTMLElement {
 
     protected initialized:boolean = false;
+
+    protected _currentState:string;
 
     setAttribute(name: string, value: any): void {
         this[name] = value;
@@ -12,10 +14,9 @@ export class UIElement extends HTMLElement {
     }
 
     /*
-    * This function marks the element Attached to the document, should trigger component initialization life cycle from here
+    * This function marks the element Attached to the document
     * */
     connectedCallback(): void {
-        this.initialize();
     }
 
     /*
@@ -25,12 +26,31 @@ export class UIElement extends HTMLElement {
     * component may be created and initialized
     *
     * */
-    private initialize():void {
-        this.preInitializeCallback();
-        this.createChildrenCallback();
-        this.childrenCreatedCallback();
-        this.initialized = true;
-        this.initializedCallback();
+    initialize():void {
+
+        if (!this.initialized) {
+            this.preInitializeCallback();
+            this.createChildrenCallback();
+            this.childrenCreatedCallback();
+            this.initialized = true;
+            this.initializedCallback();
+        }
+    }
+
+    getCurrentState():string {
+        return this._currentState;
+    }
+
+    setCurrentState(value:string):void {
+
+        if (this._currentState !== value) {
+            this._currentState = value;
+            this.validateStateCallback();
+        }
+    }
+
+    protected validateStateCallback():void {
+
     }
 
     /* Called before createChildren() method of the element is called

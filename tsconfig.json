@@ -7,8 +7,6 @@
     "skipLibCheck":true,
     "emitDecoratorMetadata":true,
     "experimentalDecorators":true,
-    "jsx":"react",
-    "reactNamespace":"fyre",
     "noEmitOnError":true,
     "lib": ["es5", "es6","dom","scripthost"],
     "moduleResolution":"node"

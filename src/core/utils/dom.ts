@@ -1,13 +1,16 @@
-
-import {titleCase, trim} from "./string-utils";
+import {trim} from "./string-utils";
 import parseHTML from "./html-parser";
 import {PropertySetter} from "../support_classes/PropertySetter";
 
-export const eventMetadata:any = {get:() => {}};
+export const eventMetadata: any = {
+    get: () => {
+    }
+};
 
 export class VNode {
     type:string|Function;
     children?:Array<VNode|string|VNode[]>;
+    slots?:{[name:string]:VNode[]};
     props?:any;
     stateManagedProps?:any;
     text?:string;
@@ -36,8 +39,17 @@ export function dom(template:any, ...args):any {
     let elements:HTMLCollection = parseHTML(templateHTML);
     let el:Element;
     if (elements && elements.length > 0) {
-         el = elements.item(0);
-        return createVNodeAtRuntime(el, values);
+
+        if (elements.length === 1) {
+            return createVNodeAtRuntime(elements.item(0), values);
+        }
+
+        let vnodes:VNode[] = [];
+
+        for (let i = 0; i < elements.length; i++) {
+            vnodes.push(createVNodeAtRuntime(elements.item(i), values));
+        }
+        return vnodes;
     }
 
     return null;
@@ -102,7 +114,7 @@ function createVNodeAtRuntime(el:Element, values:any[], parentNode?:VNode):VNode
                 let attr = el.attributes[i];
                 if (attr.name) {
 
-                    let nameAndState = attr.name.split("__");
+                    let nameAndState = attr.name.split(".");
 
                     if (nameAndState.length === 2) {
 
@@ -136,47 +148,30 @@ function createVNodeAtRuntime(el:Element, values:any[], parentNode?:VNode):VNode
 
     if (parentNode && output) {
 
-        parentNode.children.push(output);
+        if (output.props && output.props["slot"]) {
+
+            let slotName = output.props["slot"];
+            let slotChildren:VNode[];
+
+            if (!parentNode.slots)
+                parentNode.slots = {};
+
+            if (!parentNode.slots[slotName])
+                parentNode.slots[slotName] = [];
+
+            slotChildren = parentNode.slots[slotName];
+
+            slotChildren.push(output);
+
+        } else {
+            parentNode.children.push(output);
+        }
+
     }
     return output;
 }
 
-export function createVNode(ele:string|Function, props?:any, ...args):VNode {
-
-    let elementProps:any = {};
-    let stateManagedProperties:any = {};
-
-    for (let prop in props) {
-
-        let nameAndState = prop.split("__");
-
-        if (nameAndState.length === 2) {
-
-            let stateName:string = nameAndState[1];
-            if (stateManagedProperties[stateName] === undefined) {
-                stateManagedProperties[stateName] = {};
-            }
-
-            stateManagedProperties[stateName][nameAndState[0]] = props[prop];
-        }
-        else {
-
-            elementProps[prop] = props[prop];
-        }
-    }
-
-    let vnode:VNode = new VNode();
-
-    vnode.type = ele;
-    vnode.props = elementProps;
-    vnode.stateManagedProps = stateManagedProperties;
-    vnode.children = args;
-
-    return  vnode;
-
-}
-
-export function createElement(tag:any, refs?:any, stateManagedProperties?:any, parentElement?:any):any {
+export function createElement(tag:any, refs?:any, stateManagedProperties?:any, parentElement?:any): any {
 
     if (!tag)
         return null;
@@ -256,6 +251,21 @@ export function createElement(tag:any, refs?:any, stateManagedProperties?:any, p
 
         }
 
+        if (vnode.slots) {
+
+            (element as any).slots = {};
+
+            for (let slotName in vnode.slots) {
+
+                (element as any).slots[slotName] = [];
+
+                vnode.slots[slotName].forEach((vnode:VNode) => {
+
+                    element.slots[slotName].push(createElement(vnode, refs, stateManagedProperties));
+                });
+            }
+        }
+
         registerRefs(refs, vnode.props, element);
 
         registerStateManagedComponent(element, stateManagedProperties, vnode.stateManagedProps);
@@ -265,6 +275,8 @@ export function createElement(tag:any, refs?:any, stateManagedProperties?:any, p
 
     if (parentElement && element) {
 
+        if (element.initialize)
+            element.initialize();
         parentElement.appendChild(element);
     }
 

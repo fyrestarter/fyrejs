@@ -1,4 +1,4 @@
-import {createElement, createVNode, dom, VNode} from "../../../../src/core/utils/dom";
+import {createElement, dom, VNode} from "../../../../src/core/utils/dom";
 import {trim} from "../../../../src/core/utils/string-utils";
 import {element} from "../../../../src/core/decorators";
 import {PropertySetter} from "../../../../src/core/support_classes/PropertySetter";
@@ -9,66 +9,17 @@ class TestComp extends HTMLElement {
 
 describe("dom util Specs", () => {
 
-    describe("createVNode", () => {
-
-        it("should return an Vnode for intrinsic element", () => {
-
-            let vnode = createVNode("div");
-            expect(typeof vnode.type === "string").toBe(true);
-            expect(vnode.type).toEqual("div");
-        });
-
-        it("should return an Vnode for custom element", () => {
-
-            class Test {
-            }
-            let vnode = createVNode(Test);
-            expect(vnode.type === Test).toBe(true);
-        });
-
-        it("should return an Vnode with properties", () => {
-
-            let vnode = createVNode("div", {humm: "interesting", humm1: "interesting1"});
-
-            expect(vnode.props["humm"]).toEqual("interesting");
-            expect(vnode.props["humm1"]).toEqual("interesting1");
-        });
-
-        it("should return an Vnode with state managed properties", () => {
-
-            let vnode = createVNode("div", {
-                humm__stateName: "interesting",
-                humm__stateName1: "interesting1"
-            });
-
-            expect(vnode.stateManagedProps["stateName"]["humm"]).toEqual("interesting");
-            expect(vnode.stateManagedProps["stateName1"]["humm"]).toEqual("interesting1");
-        });
-
-        it("should return an Vnode with children", () => {
-
-            let vnode = createVNode("div", {
-                humm__stateName: "interesting",
-                humm__stateName1: "interesting1"
-            }, "child1");
-
-            expect(vnode.children.length).toEqual(1);
-            expect(vnode.children[0]).toEqual("child1");
-
-        });
-
-    });
     describe("dom function", () => {
 
         it("should return null if html is not proper", () => {
 
-            let vnode:VNode = dom`test`;
+            let vnode:VNode = dom`test` as VNode;
             expect(vnode).toBeNull();
         });
 
         it("should return an Vnode for intrinsic element", () => {
 
-            let vnode: VNode = dom`<div></div>`;
+            let vnode:VNode = dom`<div></div>` as VNode;
 
             expect(typeof vnode.type === "string").toBe(true);
             expect(vnode.type).toEqual("div");
@@ -76,7 +27,7 @@ describe("dom util Specs", () => {
 
         it("should return an Vnode with properties", () => {
 
-            let vnode = dom`<div humm="interesting" humm1="interesting1"></div>`;
+            let vnode = dom`<div humm="interesting" humm1="interesting1"></div>` as VNode;
 
             expect(vnode.props["humm"]).toEqual("interesting");
             expect(vnode.props["humm1"]).toEqual("interesting1");
@@ -84,7 +35,7 @@ describe("dom util Specs", () => {
 
         it("should return an Vnode with state managed properties", () => {
 
-            let vnode = dom`<div humm__statename="interesting" humm__statename1="interesting1"></div>`;
+            let vnode = dom`<div humm.statename="interesting" humm.statename1="interesting1"></div>` as VNode;
             expect(vnode.stateManagedProps["statename"]["humm"]).toEqual("interesting");
             expect(vnode.stateManagedProps["statename1"]["humm"]).toEqual("interesting1");
         });
@@ -94,7 +45,7 @@ describe("dom util Specs", () => {
             let vnode: VNode = dom`<div>
                                 <div>TEst</div>
                                 child2
-                            </div>`;
+                            </div>` as VNode;
 
             expect(vnode.children.length).toEqual(2);
             expect(trim((vnode.children[1] as VNode).text)).toEqual("child2");
@@ -109,7 +60,7 @@ describe("dom util Specs", () => {
                                 <div>TEst</div>
                                 child2 ${items[0]} ${items[1]}
                              
-                            </div>`;
+                            </div>` as VNode;
 
             expect(vnode.props["test"] instanceof Array).toBe(true);
             expect(vnode.props["class"]).toEqual("hello");
@@ -130,7 +81,7 @@ describe("dom util Specs", () => {
                                         })}
                                 </ul>
                                 
-                            </div>`;
+                            </div>` as VNode;
 
             expect(vnode.props["test"] instanceof Array).toBe(true);
             expect(vnode.props["class"]).toEqual("hello");
